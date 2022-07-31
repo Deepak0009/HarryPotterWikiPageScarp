@@ -1,5 +1,7 @@
 import re
+import os
 import csv
+import time
 import lxml
 import requests
 from bs4 import BeautifulSoup
@@ -23,8 +25,22 @@ def parse_html(url):
     return paragrpah_lines
 
 
+def output_file(name):
+    try:
+        csv_directory = os.getcwd()
+        csv_filename = name + '_' + str(round(time.time() * 1000)) + ".csv"
+        path = csv_directory + "\\" + csv_filename
+        if os.path.isdir(csv_directory):
+            print("")
+    except FileNotFoundError as e:
+        raise e
+    return path
+
+
 def write_csv(url):
-    with open("harry.csv", 'w', encoding='UTF-8') as outfile:
+    name = ''.join(re.findall(r"(?<=wiki\/)\w+", url))
+    filename = output_file(name)
+    with open(filename, 'w', encoding='UTF-8') as outfile:
         writer = csv.writer(outfile)
         headers = ["word", "count"]
         writer.writerow(headers)
@@ -33,4 +49,4 @@ def write_csv(url):
             writer.writerow([key, value])
 
 
-write_csv(url="https://en.wikipedia.org/wiki/Harry_Potter")
+write_csv(url="")
